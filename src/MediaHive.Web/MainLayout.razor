@@ -1,3 +1,84 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Security.Claims
+@inherits LayoutComponentBase
 
-<main> @Body </main>
+<AuthorizeView>
+	<Authorized>
+		<nav>
+			<p style="margin-right: 1rem;">Hello @_givenName @_surname</p><a href="/Authentication/Logout" target="_top">Odhlásit se</a>
+		</nav>
+		
+		<main>
+			<div>
+				<table>
+					<thead>
+					<tr>
+						<td>Claim Type</td>
+						<td>Claim Value</td>
+					</tr>
+					</thead>
+					<tbody>
+						@foreach (var claim in _claimsPrincipal?.Claims ?? Enumerable.Empty<Claim>())
+						{
+							<tr>
+								<td>
+									@claim.Type
+								</td>
+								<td>
+									@claim.Value
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+			
+			<div>
+				@Body
+			</div>
+		</main>
+	</Authorized>
+	<NotAuthorized>
+		<nav>
+			<a href="/Authentication/Login" target="_top">Přihlásit se</a>
+		</nav>
+		<main>
+		</main>
+	</NotAuthorized>
+</AuthorizeView>
+
+@code
+{
+	[CascadingParameter]
+	private Task<AuthenticationState>? _authenticationState { get; set; }
+
+	private ClaimsPrincipal? _claimsPrincipal;
+
+	private string? _givenName { get; set; }
+	private string? _surname { get; set; }
+	private string? _avatar { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (_authenticationState is not null)
+		{
+			var authState = await _authenticationState;
+			
+			_claimsPrincipal = authState.User;
+
+			if (_claimsPrincipal.Identity is not null && _claimsPrincipal.Identity.IsAuthenticated)
+			{
+				var givenNameClaim = _claimsPrincipal.FindFirst(ClaimTypes.GivenName);
+
+				_givenName = givenNameClaim?.Value;
+
+				var surnameClaim = _claimsPrincipal.FindFirst(ClaimTypes.Surname);
+
+				_surname = surnameClaim?.Value;
+
+				var avatarClaim = _claimsPrincipal.FindFirst("urn:google:image");
+
+				_avatar = avatarClaim?.Value;
+			}
+		}
+	}
+}

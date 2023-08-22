@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MediaHive.Core\MediaHive.Core.csproj" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <PackageReference Include="NetEscapades.AspNetCore.SecurityHeaders" Version="0.20.0" />
+    </ItemGroup>
+
+</Project>

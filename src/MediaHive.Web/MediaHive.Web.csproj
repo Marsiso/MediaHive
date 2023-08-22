@@ -6,6 +6,19 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Configurations>Debug;Release</Configurations>
         <Platforms>AnyCPU</Platforms>
+        <UserSecretsId>67e2ed5b-8c14-4045-8059-24df1a5955e2</UserSecretsId>
     </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MediaHive.Application\MediaHive.Application.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.0-preview.7.23375.9" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Shared\" />
+    </ItemGroup>
 
 </Project>
