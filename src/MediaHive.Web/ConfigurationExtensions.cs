@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediaHive.Application.Authentication;
+using MediaHive.Data.EF;
 using MediaHive.Domain.Validators;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -8,6 +9,20 @@ namespace MediaHive.Web;
 
 public static class ConfigurationExtensions
 {
+	public static IServiceCollection AddDbConnection(this IServiceCollection services, IConfiguration configuration)
+	{
+		services.AddSingleton<IValidator<MediaHiveContextOptions>, MediaHiveContextOptionsValidator>();
+		
+		services.AddOptions<MediaHiveContextOptions>()
+			.Bind(configuration.GetSection(MediaHiveContextOptions.SectionName))
+			.ValidateFluently()
+			.ValidateOnStart();
+
+		services.AddDbContext<MediaHiveContext>();
+
+		return services;
+	}
+	
 	public static IServiceCollection AddGoogleCloudIdentity(this IServiceCollection services, IConfiguration configuration)
 	{
 		var googleCloudIdentityConfigurationSection = configuration.GetSection(GoogleCloudIdentityOptions.SegmentName);

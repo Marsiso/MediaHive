@@ -1,4 +1,5 @@
 using MediaHive.Application.Security;
+using MediaHive.Data.EF;
 using MediaHive.Web;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,13 +7,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
+builder.Services.AddDbConnection(builder.Configuration);
 builder.Services.AddGoogleCloudIdentity(builder.Configuration);
 
 var app = builder.Build();
 
+using var scope = app.Services.CreateScope();
+var context = scope.ServiceProvider.GetRequiredService<MediaHiveContext>();
+
 if (!app.Environment.IsDevelopment())
 {
-	app.UseHsts();
+	context.Database.EnsureDeleted();
+	context.Database.EnsureCreated();
+}
+else
+{
+	context.Database.EnsureCreated();
 }
 
 var policies = SecurityHeaderHelpers.GetHeaderPolicyCollection(app.Environment.IsDevelopment());
